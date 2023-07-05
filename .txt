@@ -1,0 +1,142 @@
+import './style.css'
+import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import * as dat from 'dat.gui'
+
+const canvas = document.querySelector('.cube3')
+
+const scene = new THREE.Scene()
+const axisH = new THREE.AxesHelper(5)
+scene.add(axisH)
+
+const gui = new dat.GUI()
+
+const textureLoader = new THREE.TextureLoader()
+const texture = textureLoader.load('/textures/matcaps/5.png')
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
+ambientLight.intensity = 0.5
+gui.add(ambientLight, 'intensity', 0.001, 1, 0.00001).name('Ambient Light')
+scene.add(ambientLight)
+
+const directionalLight = new THREE.DirectionalLight(0xc00f, 0.5)
+directionalLight.intensity = 0.5
+gui.add( directionalLight, 'intensity', 0, 1, 0.00001).name('Directional Light')
+scene.add(directionalLight)
+
+const hemiLight = new THREE.HemisphereLight(0xff0000, 0x0000ff, 0.5)
+hemiLight.intensity = 0.5
+gui.add( hemiLight, 'intensity', 0, 10, 0.00001).name('Hemi Light')
+scene.add(hemiLight)
+
+/* const fontLoader = new THREE.FontLoader()
+fontLoader.load('/fonts/helvetiker_regular.typeface.json', (font) => {
+    const textGeo = new THREE.TextBufferGeometry('welcome', {
+        font,
+        size: 0.6,
+        height: 0.2,
+        curveSegments: 12, 
+        bevelEnabled: true,
+        bevelSegments: 5,
+        bevelThickness: 0.03,
+        bevelSize: 0.02,
+        bevelOffset: 0,
+    })
+    const textGeo1 = new THREE.TextBufferGeometry('to', {
+        font,
+        size: 0.6,
+        height: 0.2,
+        curveSegments: 12, 
+        bevelEnabled: true,
+        bevelSegments: 5,
+        bevelThickness: 0.03,
+        bevelSize: 0.02,
+        bevelOffset: 0,
+    })
+    const textGeo2 = new THREE.TextBufferGeometry('Neverland', {
+        font,
+        size: 0.6,
+        height: 0.2,
+        curveSegments: 12, 
+        bevelEnabled: true,
+        bevelSegments: 5,
+        bevelThickness: 0.03,
+        bevelSize: 0.02,
+        bevelOffset: 0,
+    })
+    
+    textGeo.center()
+    textGeo1.center()
+    textGeo2.center()
+    const txtMat = new THREE.MeshBasicMaterial({map: texture})
+    const text = new THREE.Mesh(textGeo, txtMat)
+    const text1 = new THREE.Mesh(textGeo1, txtMat)
+    const text2 = new THREE.Mesh(textGeo2, txtMat)
+    text.position.y = 1
+    text2.position.y = -1
+    scene.add(text, text1, text2)
+}) */
+
+const material = new THREE.MeshBasicMaterial()
+
+const plane = new THREE.Mesh(
+    new THREE.PlaneBufferGeometry(15, 15),
+    material
+)
+plane.rotation.x = - Math.PI * 0.5
+plane.position.y = - 5
+
+const plane1 = new THREE.Mesh(
+    new THREE.PlaneBufferGeometry(15, 15),
+    material
+)
+plane1.position.z = - 7.5
+
+const plane2 = new THREE.Mesh(
+    new THREE.PlaneBufferGeometry(15, 15),
+    material
+)
+plane2.position.z = 7.5
+plane2.rotation.y = Math.PI
+
+const plane3 = new THREE.Mesh(
+    new THREE.PlaneBufferGeometry(15, 15),
+    material
+)
+plane3.rotation.y = Math.PI * 0.5
+plane3.position.x = -7.5
+
+const plane4 = new THREE.Mesh(
+    new THREE.PlaneBufferGeometry(15, 15),
+    material
+)
+plane4.rotation.y = -Math.PI * 0.5
+plane4.position.x = 7.5
+
+scene.add(plane, plane1, plane2, plane3, plane4)
+
+
+
+const sizes = {
+    width: window.innerWidth,
+    height: window.innerHeight
+}
+
+const camera = new THREE.PerspectiveCamera(104, sizes.width / sizes.height, 1, 100 )
+camera.position.z = 6
+scene.add(camera)
+
+const controls = new OrbitControls(camera, canvas)
+controls.enableDamping = true
+
+const renderer = new THREE.WebGL1Renderer({canvas: canvas})
+renderer.setSize(sizes.width, sizes.height)
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+const update = () => {
+    controls.update()
+    renderer.render(scene, camera)
+    window.requestAnimationFrame(update)
+}
+
+update()
