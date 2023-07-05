@@ -95,6 +95,24 @@ fontLoader.load('/fonts/helvetiker_regular.typeface.json', (font) => {
       renderer.render(scene, camera);
     }
     animate();
+
+    const dg = new THREE.TorusBufferGeometry(.3, .2, 20, 45)
+
+    for(let i = 0; i < 300; i++) {
+        const dm =  new THREE.MeshMatcapMaterial({matcap:  textureLoader.load(`/textures/matcaps/8.png`)})
+        const donut = new THREE.Mesh(dg, dm)
+        donut.position.x = (Math.random() - .5) * 12
+        donut.position.y = (Math.random() - .5) * 12
+        donut.position.z = (Math.random() - .5) * 12
+
+        donut.rotation.x = (Math.random()) * Math.PI
+        donut.rotation.y = (Math.random()) * Math.PI
+
+        const scale = Math.random()
+
+        donut.scale.set(scale, scale, scale)
+        scene.add(donut)
+    }
 })
 
 const material = new THREE.MeshStandardMaterial()
@@ -178,6 +196,7 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 const update = () => {
+    
     controls.update()
     renderer.render(scene, camera)
     window.requestAnimationFrame(update)
